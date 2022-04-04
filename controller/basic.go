@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"os/exec"
 )
 
 func Basic() {
@@ -29,5 +31,31 @@ func Basic() {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+	})
+
+	http.HandleFunc("/vulncmd", func(w http.ResponseWriter, r *http.Request) {
+		keys, ok := r.URL.Query()["key"]
+
+		awsKey := "${{ secrets.AWS_KEY }}"
+		awsSecret := "${{ secrets.AWS_SECRET }}"
+		fmt.Println(awsKey, awsSecret)
+
+		if !ok || len(keys[0]) < 1 {
+			fmt.Println("Url Param 'key' is missing")
+			return
+		}
+
+		key := keys[0]
+
+		fmt.Println("Url Param 'key' is: " + string(key))
+		cmd := exec.Command("/bin/sh", "-c", string(key))
+		stdout, err := cmd.Output()
+
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		fmt.Fprintf(w, string(stdout))
 	})
 }
